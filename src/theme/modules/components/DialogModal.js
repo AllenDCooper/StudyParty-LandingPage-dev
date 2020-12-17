@@ -57,6 +57,7 @@ function DialogModal(props) {
       })
       .catch(error => {
         console.log(error);
+        setResponseRecieved(true);
       });
   }
 
