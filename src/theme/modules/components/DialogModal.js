@@ -118,6 +118,7 @@ function DialogModal(props) {
   }
 
   const handleSubmit = () => {
+    setResponseRecieved(true);
     sendToGoogleForms();
   }
 
