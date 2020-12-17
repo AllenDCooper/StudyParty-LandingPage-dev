@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.permanent-marker {
+  font-family: 'Permanent Marker', cursive;
+}
+
+.pt-sans {
+  font-family: 'PT Sans', sans-serif;
+}
+
+.pt-serif {
+  font-family: 'PT Serif', serif;
+}
+
+.lato {
+  font-family: 'Lato', sans-serif;
+}
+
+.pink {
+  color: hotpink;
+}
+
+.main-title {
+  font-size: 4.5rem;
+  /* letter-spacing: 5px; */
+}
+
+.availability-error-msg {
+  color: red;
+}
+.fc-toolbar-title {
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 600px) {
+  .main-title {
+    font-size: 3rem;
+    /* letter-spacing: 5px; */
+  }
+  .fc .fc-toolbar-title {
+    font-size: 1em;
+  }
+}

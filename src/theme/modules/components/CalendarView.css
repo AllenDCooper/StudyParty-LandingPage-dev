@@ -1,0 +1,6 @@
+@media only screen and (max-width: 600px) {
+  .fc-view-harness .fc-view-harness-active {
+    min-height: 500px;
+    height: 500px;
+  }
+}
