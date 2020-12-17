@@ -69,6 +69,7 @@ function DialogModal(props) {
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
     sendToServer(nameAndEmail.email, nameAndEmail.name)
+    setResponseRecieved(true);
 
     const timeZoneDif = (new Date().getTimezoneOffset())
 
