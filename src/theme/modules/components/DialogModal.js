@@ -34,7 +34,8 @@ function DialogModal(props) {
 
   // Hooks
   const [valueArr, setValueArr] = useState(initialValueArr);
-  const [responseRecieved, setResponseRecieved] = useState(false);
+  const [ || !emailResponseReceived, set || !emailResponseReceived] = useState(false);
+  const [emailResponseReceived, setEmail || !emailResponseReceived] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
   const handleClose = () => {
@@ -51,13 +52,14 @@ function DialogModal(props) {
     }
     )
       .then(response => {
-        console.log("survey successfully created")
-        console.log(response);
-        setResponseRecieved(true);
+        console.log("email sent")
+        console.log(response.data);
+        setEmail || !emailResponseReceived(true);
       })
       .catch(error => {
         console.log(error);
-        setResponseRecieved(true);
+        setEmail || !emailResponseReceived(true);
+        submitError(true);
       });
   }
 
@@ -69,7 +71,7 @@ function DialogModal(props) {
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
     sendToServer(nameAndEmail.email, nameAndEmail.name)
-    setResponseRecieved(true);
+    set || !emailResponseReceived(true);
 
     const timeZoneDif = (new Date().getTimezoneOffset())
 
@@ -91,34 +93,34 @@ function DialogModal(props) {
     console.log(submissionDateTime)
 
     const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
-    // axios.get(url, {
-    //   params: {
-    //     submitted: submissionDateTime.toUTCString(),
-    //     email: nameAndEmail.email,
-    //     name: nameAndEmail.name,
-    //     // testType: testType,
-    //     testDateMonth: testDate.getMonth() + 1,
-    //     testDateYear: testDate.getFullYear(),
-    //     availability: formatAvailabilityTimesArr(availability),
-    //     testPrep: testPrep,
-    //     groupSize: groupSize,
-    //     targetScore: targetScore,
-    //     targetSection: targetSection
-    //   }
-    // })
-    //   .then(function (response) {
-    //     setResponseRecieved(true);
-    //     console.log("submitted");
-    //     console.log(response)
-    //   })
-    //   .catch(function (error) {
-    //     setSubmitError(true);
-    //     console.log(error)
-    //   })
+    axios.get(url, {
+      params: {
+        submitted: submissionDateTime.toUTCString(),
+        email: nameAndEmail.email,
+        name: nameAndEmail.name,
+        // testType: testType,
+        testDateMonth: testDate.getMonth() + 1,
+        testDateYear: testDate.getFullYear(),
+        availability: formatAvailabilityTimesArr(availability),
+        testPrep: testPrep,
+        groupSize: groupSize,
+        targetScore: targetScore,
+        targetSection: targetSection
+      }
+    })
+      .then(function (response) {
+        set || !emailResponseReceived(true);
+        console.log("submitted");
+        console.log(response)
+      })
+      .catch(function (error) {
+        setSubmitError(true);
+        console.log(error)
+      })
   }
 
   const handleSubmit = () => {
-    setResponseRecieved(true);
+    set || !emailResponseReceived(true);
     sendToGoogleForms();
   }
 
@@ -198,7 +200,7 @@ function DialogModal(props) {
         maxWidth={'sm'}
       // transitionDuration={400}
       >
-        {!responseRecieved ?
+        {!responseRecieved || !emailResponseReceived ?
           <DialogContentText
             style={{
               textAlign: 'center',
