@@ -34,8 +34,8 @@ function DialogModal(props) {
 
   // Hooks
   const [valueArr, setValueArr] = useState(initialValueArr);
-  const [ || !emailResponseReceived, set || !emailResponseReceived] = useState(false);
-  const [emailResponseReceived, setEmail || !emailResponseReceived] = useState(false);
+  const [responseRecieved, setResponseRecieved] = useState(false);
+  const [emailResponseReceived, setEmailResponseRecieved] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
   const handleClose = () => {
@@ -54,11 +54,11 @@ function DialogModal(props) {
       .then(response => {
         console.log("email sent")
         console.log(response.data);
-        setEmail || !emailResponseReceived(true);
+        setEmailResponseRecieved(true);
       })
       .catch(error => {
         console.log(error);
-        setEmail || !emailResponseReceived(true);
+        setEmailResponseRecieved(true);
         submitError(true);
       });
   }
@@ -71,7 +71,7 @@ function DialogModal(props) {
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
     sendToServer(nameAndEmail.email, nameAndEmail.name)
-    set || !emailResponseReceived(true);
+    setResponseRecieved(true);
 
     const timeZoneDif = (new Date().getTimezoneOffset())
 
@@ -109,7 +109,7 @@ function DialogModal(props) {
       }
     })
       .then(function (response) {
-        set || !emailResponseReceived(true);
+        setResponseRecieved(true);
         console.log("submitted");
         console.log(response)
       })
@@ -120,7 +120,7 @@ function DialogModal(props) {
   }
 
   const handleSubmit = () => {
-    set || !emailResponseReceived(true);
+    setResponseRecieved(true);
     sendToGoogleForms();
   }
 
