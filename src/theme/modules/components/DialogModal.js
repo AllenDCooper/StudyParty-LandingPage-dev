@@ -42,9 +42,9 @@ function DialogModal(props) {
     props.setShow(0);
   };
 
-  const sendToServer = (emailInput, nameInput) => {
-    axios.post("https://studyparty-server.herokuapp.com/api/signup", {
-      email: emailInput, name: nameInput
+  const sendToServer = (emailInput, nameInput, availabilityArrInput) => {
+    axios.post("https://studyparty-server.herokuapp.com/api/signupTest", {
+      email: emailInput, name: nameInput, availabilityArr: availabilityArrInput
     },
     {
       headers:
@@ -59,7 +59,7 @@ function DialogModal(props) {
       .catch(error => {
         console.log(error);
         setEmailResponseRecieved(true);
-        submitError(true);
+        setSubmitError(true);
       });
   }
 
@@ -70,7 +70,7 @@ function DialogModal(props) {
     console.log(valueArr)
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
-    sendToServer(nameAndEmail.email, nameAndEmail.name)
+    sendToServer(nameAndEmail.email, nameAndEmail.name, availability)
     setResponseRecieved(true);
 
     const timeZoneDif = (new Date().getTimezoneOffset())
@@ -92,31 +92,31 @@ function DialogModal(props) {
     submissionDateTime.setMinutes(submissionDateTime.getMinutes() - (5 * 60))
     console.log(submissionDateTime)
 
-    const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
-    axios.get(url, {
-      params: {
-        submitted: submissionDateTime.toUTCString(),
-        email: nameAndEmail.email,
-        name: nameAndEmail.name,
-        // testType: testType,
-        testDateMonth: testDate.getMonth() + 1,
-        testDateYear: testDate.getFullYear(),
-        availability: formatAvailabilityTimesArr(availability),
-        testPrep: testPrep,
-        groupSize: groupSize,
-        targetScore: targetScore,
-        targetSection: targetSection
-      }
-    })
-      .then(function (response) {
-        setResponseRecieved(true);
-        console.log("submitted");
-        console.log(response)
-      })
-      .catch(function (error) {
-        setSubmitError(true);
-        console.log(error)
-      })
+  //   const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
+  //   axios.get(url, {
+  //     params: {
+  //       submitted: submissionDateTime.toUTCString(),
+  //       email: nameAndEmail.email,
+  //       name: nameAndEmail.name,
+  //       // testType: testType,
+  //       testDateMonth: testDate.getMonth() + 1,
+  //       testDateYear: testDate.getFullYear(),
+  //       availability: formatAvailabilityTimesArr(availability),
+  //       testPrep: testPrep,
+  //       groupSize: groupSize,
+  //       targetScore: targetScore,
+  //       targetSection: targetSection
+  //     }
+  //   })
+  //     .then(function (response) {
+  //       setResponseRecieved(true);
+  //       console.log("submitted");
+  //       console.log(response)
+  //     })
+  //     .catch(function (error) {
+  //       setSubmitError(true);
+  //       console.log(error)
+  //     })
   }
 
   const handleSubmit = () => {
@@ -240,4 +240,4 @@ DialogModal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DialogModal);
+export default withStyles(styles)(DialogModal)
