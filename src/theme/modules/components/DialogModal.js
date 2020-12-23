@@ -42,14 +42,18 @@ function DialogModal(props) {
     props.setShow(0);
   };
 
-  const sendToServer = (emailInput, nameInput, availabilityArrInput) => {
-    axios.post("https://studyparty-server.herokuapp.com/api/signupTest", {
-      email: emailInput, name: nameInput, availabilityArr: availabilityArrInput
+  // send user name and email address to server to generate automated email
+  const sendToServer = (valueArr) => {
+    const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
+    axios.post("https://studyparty-server.herokuapp.com/api/signup", {
+      email: nameAndEmail.email,
+      name: nameAndEmail.name,
+      availabilityArr: availability
     },
-    {
-      headers:
-        { 'Access-Control-Allow-Origin': '*'}
-    }
+      {
+        headers:
+          { 'Access-Control-Allow-Origin': '*' }
+      }
     )
       .then(response => {
         console.log("email sent")
@@ -64,64 +68,74 @@ function DialogModal(props) {
   }
 
   // Sends data to populate Google Sheet
-  const sendToGoogleForms = () => {
-    props.setShow(props.show + 1);
-    console.log(props.show)
+  const sendToGoogleForms = (valueArr) => {
     console.log(valueArr)
+    props.setShow(props.show + 1);
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
-    sendToServer(nameAndEmail.email, nameAndEmail.name, availability)
-    setResponseRecieved(true);
+    // const timeZoneDif = (new Date().getTimezoneOffset())
+    // const formattedTimeArr = []
+    // const formatAvailabilityTimesArr = (arr) => {
+    //   arr.forEach((timeEntry, index) => {
+    //     formattedTimeArr[index] = timeEntry.timeClicked.start
+    //     formattedTimeArr[index].setMinutes(formattedTimeArr[index].getMinutes() + timeZoneDif - (5 * 60))
+    //     formattedTimeArr[index] = formattedTimeArr[index].toUTCString()
+    //     console.log(formattedTimeArr[index]);
 
-    const timeZoneDif = (new Date().getTimezoneOffset())
-
-    const formattedTimeArr = []
-
-    const formatAvailabilityTimesArr = (arr) => {
-      arr.forEach((timeEntry, index) => {
-        formattedTimeArr[index] = timeEntry.timeClicked.start
-        formattedTimeArr[index].setMinutes(formattedTimeArr[index].getMinutes() + timeZoneDif - (5 * 60))
-        formattedTimeArr[index] = formattedTimeArr[index].toUTCString()
-        console.log(formattedTimeArr[index]);
-
+    //   })
+    //   return JSON.stringify(formattedTimeArr)
+    // }
+  
+    const sortArr = (availabilityArr, timeTypeStr) => {
+      // timeType must be "newYork", "local", or "time"
+      let sortedArr = []
+      availabilityArr.forEach((item, index) => {
+        let dateStr = item[timeTypeStr].start
+        sortedArr.push(dateStr)
       })
-      return JSON.stringify(formattedTimeArr)
+      return sortedArr
     }
 
     const submissionDateTime = new Date()
     submissionDateTime.setMinutes(submissionDateTime.getMinutes() - (5 * 60))
     console.log(submissionDateTime)
 
-  //   const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
-  //   axios.get(url, {
-  //     params: {
-  //       submitted: submissionDateTime.toUTCString(),
-  //       email: nameAndEmail.email,
-  //       name: nameAndEmail.name,
-  //       // testType: testType,
-  //       testDateMonth: testDate.getMonth() + 1,
-  //       testDateYear: testDate.getFullYear(),
-  //       availability: formatAvailabilityTimesArr(availability),
-  //       testPrep: testPrep,
-  //       groupSize: groupSize,
-  //       targetScore: targetScore,
-  //       targetSection: targetSection
-  //     }
-  //   })
-  //     .then(function (response) {
-  //       setResponseRecieved(true);
-  //       console.log("submitted");
-  //       console.log(response)
-  //     })
-  //     .catch(function (error) {
-  //       setSubmitError(true);
-  //       console.log(error)
-  //     })
+    const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
+    axios.get(url, {
+      params: {
+        submitted: submissionDateTime.toUTCString(),
+        email: nameAndEmail.email,
+        name: nameAndEmail.name,
+        // testType: testType,
+        testDateMonth: testDate.getMonth() + 1,
+        testDateYear: testDate.getFullYear(),
+        availabilityEST: JSON.stringify(sortArr(availability, "newYork")),
+        availabilityLocal: JSON.stringify(sortArr(availability, "local")),  
+        availabilityTime: JSON.stringify(sortArr(availability, "time")),
+        testPrep: testPrep,
+        groupSize: groupSize,
+        targetScore: targetScore,
+        targetSection: targetSection,
+        timeZone: availability[0].timeZone,
+        timeZoneLocation: availability[0].timeZoneLocation,
+        timeZoneOffset: availability[0].timeZoneOffset
+      }
+    })
+      .then(function (response) {
+        setResponseRecieved(true);
+        console.log("submitted");
+        console.log(response)
+      })
+      .catch(function (error) {
+        setSubmitError(true);
+        console.log(error)
+      })
   }
 
   const handleSubmit = () => {
-    setResponseRecieved(true);
-    sendToGoogleForms();
+    console.log(valueArr)
+    sendToServer(valueArr);
+    sendToGoogleForms(valueArr);
   }
 
   return (
@@ -240,4 +254,4 @@ DialogModal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DialogModal)
+export default withStyles(styles)(DialogModal);

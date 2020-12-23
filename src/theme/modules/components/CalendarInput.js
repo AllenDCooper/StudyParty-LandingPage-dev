@@ -27,7 +27,6 @@ function CalendarInput(props) {
 
   const handleChange = (value) => {
     setValue(value)
-    console.log(value)
   }
 
   const updateValueArr = () => {
@@ -38,6 +37,7 @@ function CalendarInput(props) {
 
   const handleNext = () => {
     console.log(value)
+    // user must choose at least 3 time slots, else they receive an error message
     if (value.length > 2) {
       setError(false);
       setErrorMessage("");
@@ -83,17 +83,6 @@ function CalendarInput(props) {
             onChange={handleChange}
             error={errorMessage}
           />
-          {/* <TextField
-            style={{ width: '100%', color: 'black', margin: '0 auto' }}
-            type="text"
-            id="email"
-            name="email"
-            label="email address"
-            variant="outlined"
-            value={value}
-            onChange={handleChange}
-            error={errorMessage}
-          /> */}
           {error ?
             <FormHelperText id="helper-text" style={{ marginTop: '20px', color: 'red' }} >{errorMessage}</FormHelperText>
             : null}
