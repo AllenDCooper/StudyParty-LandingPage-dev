@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from './Button';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, FormHelperText } from '@material-ui/core'
-import CalendarSelect from './CalendarSelect';
+import CalendarPageContainer from './CalendarPageContainer';
 
 const styles = (theme) => ({
   button: {
@@ -73,7 +73,7 @@ function CalendarInput(props) {
           <DialogContentText>
             {questionText}
           </DialogContentText>
-          <CalendarSelect
+          <CalendarPageContainer
             style={{ width: '100%', color: 'black', margin: '0 auto' }}
             id={questionName}
             name={questionName}

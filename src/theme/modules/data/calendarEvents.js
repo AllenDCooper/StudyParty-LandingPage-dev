@@ -3,7 +3,7 @@ const getNewDate = (dayChange, dateName, hourNum) => {
   var date = new Date();
   date.setDate(date.getDate() + dayChange)
   date.setUTCHours(hourNum, 0, 0, 0);
-  return { title: `${dateName}`, start: date }
+  return { title: date.getTime(), start: date }
 }
 
 // function that builds an array of time slots for a given date range (tomorrow is equivalent to firstDay === 1) and hour range (UTC)

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DateTime } from "luxon";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CircularProgress } from '@material-ui/core'
@@ -42,13 +43,55 @@ function DialogModal(props) {
     props.setShow(0);
   };
 
+  const formatDateArr = (availabilityArr, timeType) => {
+    // put array in ascending order to make it easier to read 
+    availabilityArr.sort(function (a, b) { return a - b })
+    // format time based on various format
+    switch (timeType) {
+      case "newYork":
+        let availabilityArr_EST = []
+        availabilityArr.forEach((timeslot, index) => {
+          let newStart_AmericaNewYork = DateTime.fromMillis(parseInt(timeslot), { zone: "America/New_York" });
+          availabilityArr_EST.push(newStart_AmericaNewYork.toFormat('ccc MMM dd yyyy T ZZZZ'))
+        })
+        return (availabilityArr_EST)
+      case "local":
+        let availabilityArr_Local = []
+        availabilityArr.forEach((timeslot, index) => {
+          let newStart_Local = DateTime.fromMillis(parseInt(timeslot))
+          availabilityArr_Local.push(newStart_Local.toFormat('ccc MMM dd yyyy T ZZZZ'))
+        })
+        return (availabilityArr_Local)
+      case "time":
+        return (availabilityArr)
+    }
+  }
+
+  const getTimeZone = (timeZoneType) => {
+    let newDate = new Date()
+    switch (timeZoneType) {
+      case "timeZoneName":
+        return newDate.toString().match(/\(([A-Za-z\s].*)\)/)[1]
+      case "timeZoneOffset":
+        return newDate.getTimezoneOffset()
+      case "timeZoneLocation":
+        return DateTime.fromMillis(newDate.getTime()).zoneName
+      case "currentMoment":
+        let currentNYTime = DateTime.fromMillis(newDate.getTime(), { zone: "America/New_York" })
+        return (currentNYTime.toFormat('ccc MMM dd yyyy T ZZZZ'))
+    }
+  }
+
   // send user name and email address to server to generate automated email
   const sendToServer = (valueArr) => {
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
-    axios.post("https://studyparty-server.herokuapp.com/api/signup", {
+    axios.post("http://localhost:3001/api/signup", {
       email: nameAndEmail.email,
       name: nameAndEmail.name,
-      availabilityArr: availability
+      availabilityArr: formatDateArr(availability, "time"),
+      timeZone: getTimeZone("timeZoneName"),
+      timeZoneLocation: getTimeZone("timeZoneLocation"),
+      timeZoneOffset: getTimeZone("timeZoneOffset")
     },
       {
         headers:
@@ -73,52 +116,25 @@ function DialogModal(props) {
     props.setShow(props.show + 1);
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
 
-    // const timeZoneDif = (new Date().getTimezoneOffset())
-    // const formattedTimeArr = []
-    // const formatAvailabilityTimesArr = (arr) => {
-    //   arr.forEach((timeEntry, index) => {
-    //     formattedTimeArr[index] = timeEntry.timeClicked.start
-    //     formattedTimeArr[index].setMinutes(formattedTimeArr[index].getMinutes() + timeZoneDif - (5 * 60))
-    //     formattedTimeArr[index] = formattedTimeArr[index].toUTCString()
-    //     console.log(formattedTimeArr[index]);
-
-    //   })
-    //   return JSON.stringify(formattedTimeArr)
-    // }
-  
-    const sortArr = (availabilityArr, timeTypeStr) => {
-      // timeType must be "newYork", "local", or "time"
-      let sortedArr = []
-      availabilityArr.forEach((item, index) => {
-        let dateStr = item[timeTypeStr].start
-        sortedArr.push(dateStr)
-      })
-      return sortedArr
-    }
-
-    const submissionDateTime = new Date()
-    submissionDateTime.setMinutes(submissionDateTime.getMinutes() - (5 * 60))
-    console.log(submissionDateTime)
-
     const url = 'https://script.google.com/macros/s/AKfycbxSQuoJeJTkKolxST5eVJrBi3MrNUebPlZi6tGQzmll34dl1HE/exec'
     axios.get(url, {
       params: {
-        submitted: submissionDateTime.toUTCString(),
+        submitted: getTimeZone("currentMoment"),
         email: nameAndEmail.email,
         name: nameAndEmail.name,
         // testType: testType,
         testDateMonth: testDate.getMonth() + 1,
         testDateYear: testDate.getFullYear(),
-        availabilityEST: JSON.stringify(sortArr(availability, "newYork")),
-        availabilityLocal: JSON.stringify(sortArr(availability, "local")),  
-        availabilityTime: JSON.stringify(sortArr(availability, "time")),
+        availabilityEST: JSON.stringify(formatDateArr(availability, "newYork")),
+        availabilityLocal: JSON.stringify(formatDateArr(availability, "local")),
+        availabilityTime: JSON.stringify(formatDateArr(availability, "time")),
         testPrep: testPrep,
         groupSize: groupSize,
         targetScore: targetScore,
         targetSection: targetSection,
-        timeZone: availability[0].timeZone,
-        timeZoneLocation: availability[0].timeZoneLocation,
-        timeZoneOffset: availability[0].timeZoneOffset
+        timeZone: getTimeZone("timeZoneName"),
+        timeZoneLocation: getTimeZone("timeZoneLocation"),
+        timeZoneOffset: getTimeZone("timeZoneOffset")
       }
     })
       .then(function (response) {

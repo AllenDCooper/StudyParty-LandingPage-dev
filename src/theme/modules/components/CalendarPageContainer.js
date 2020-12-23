@@ -12,55 +12,15 @@ class CalendarPageContainer extends React.Component {
     calendarPageNum: 1,
   }
 
-  // function to prevent autoscroll back to top of calendar after event click
-  moveToInWindow = (x, y) => {
-    console.log(`moveToInWindow run`);
-    window.moveTo(x, y);
-  }
-
-  // For some reason, FullCalendar changes timezone from local to GMT, so this function corrects the start time to be what it would in GMT timezone
-  formatDate = (timeObj) => {
-    console.log(timeObj)
-    // start by getting users current timezone
-    let newDate = new Date()
-    const timeZoneDif = newDate.getTimezoneOffset()
-    const timeZoneName = newDate.toString().match(/\(([A-Za-z\s].*)\)/)[1]
-    // correct starting timeslot to match with UTC timezone
-    let newStart = new Date(timeObj.start)
-    newStart.setMinutes(newStart.getMinutes() + timeZoneDif);
-    let newStartFormatted = DateTime.fromMillis(newStart.getTime())
-    // time slot ends 1 hour after start time
-    let newEnd = new Date(newStart)
-    newEnd.setMinutes(newEnd.getMinutes() + 60)
-    let newEndFormatted = DateTime.fromMillis(newEnd.getTime())
-    console.log(newEnd.toUTCString())
-    // convert to EST
-    let newStart_AmericaNewYork = DateTime.fromMillis(newStart.getTime(), { zone: "America/New_York" });
-    let newEnd_AmericaNewYork = DateTime.fromMillis(newEnd.getTime(), { zone: "America/New_York" })
-    // get timezone location
-    const timeZoneLocation = DateTime.fromMillis(newStart.getTime()).zoneName
-
-    return (
-      {
-        // originalObj: {start: timeObj.start, end: timeObj.end},
-        // dateObj: {start: newStart, end: newEnd},
-        local: { start: newStartFormatted.toFormat('ccc MMM dd yyyy TTTT'), end: newEndFormatted.toFormat('ccc MMM dd yyyy TTTT') },
-        newYork: { start: newStart_AmericaNewYork.toFormat('ccc MMM dd yyyy TTT'), end: newEnd_AmericaNewYork.toFormat('ccc MMM dd yyyy TTT') },
-        time: { start: newStart.getTime(), end: newEnd.getTime() },
-        timeZoneLocation: timeZoneLocation,
-        timeZoneOffset: timeZoneDif,
-        timeZone: timeZoneName
-      }
-    )
-  }
-
   handleEventClick = (clickInfo) => {
     clickInfo.jsEvent.preventDefault()
 
-    // get the eventId and the timeClicked from the timeslot clicked
-    const eventId = clickInfo.event._instance.instanceId
-    const timeClicked = clickInfo.event._instance.range
-    console.log(timeClicked)
+    // toggle the background color on event click
+    clickInfo.el.style.backgroundColor === 'green' ? clickInfo.el.style.backgroundColor = 'rgb(55, 136, 216)' : clickInfo.el.style.backgroundColor = 'green'
+
+    // get the title of the timeslot clicked; the title is the start time in UTC milliseconds
+    console.log(clickInfo.event._def.title);
+    const dateInMS = parseInt(clickInfo.event._def.title)
 
     // then store the timeslot into state
     this.setState(prevState => {
@@ -70,26 +30,20 @@ class CalendarPageContainer extends React.Component {
       // first check to see if the timeslot has already been clicked
       eventsClickedArr.forEach((item, index) => {
         // ...if it has, get the index of the timeslot in the eventsClickedArr...
-        if (item.eventId === eventId) {
+        if (dateInMS === item) {
           matchFound = true;
           matchIndex = index;
         }
       })
-      // ...then remove it from the array, and change its color back to the original blue
+      // ...then remove it from the array
       if (matchFound) {
         eventsClickedArr.splice(matchIndex, 1)
-        clickInfo.el.style.backgroundColor = 'rgb(55, 136, 216)'
       }
-      // if it hasn't been clicked, add it to the array and change its color to green
+      // if it hasn't been clicked, add it to the array
       else if (matchFound === false) {
         clickInfo.el.style.backgroundColor = 'green'
-        let formattedDateObj = this.formatDate(timeClicked)
-        console.log(formattedDateObj);
-        console.log(typeof formattedDateObj)
-        formattedDateObj.eventId = eventId
-        eventsClickedArr.push(formattedDateObj)
+        eventsClickedArr.push(dateInMS)
       }
-      // then store the updated eventsClickedArr in state
       return {
         eventsClickedArr
       }
@@ -97,7 +51,6 @@ class CalendarPageContainer extends React.Component {
       // callback function that pushes the updated eventsClickedArr up to valueArr stored on the DialogModal component and passed down as props
       () => {
         this.props.onChange(this.state.eventsClickedArr);
-        this.moveToInWindow(clickInfo.jsEvent.pageX, clickInfo.jsEvent.pageY);
       }
     )
   }
