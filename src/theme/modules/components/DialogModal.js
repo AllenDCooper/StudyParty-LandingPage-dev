@@ -85,7 +85,7 @@ function DialogModal(props) {
   // send user name and email address to server to generate automated email
   const sendToServer = (valueArr) => {
     const [testDate, groupSize, testPrep, targetScore, targetSection, availability, nameAndEmail] = valueArr
-    axios.post("http://localhost:3001/api/signup", {
+    axios.post("https://studyparty-server.herokuapp.com/api/signup", {
       email: nameAndEmail.email,
       name: nameAndEmail.name,
       availabilityArr: formatDateArr(availability, "time"),
