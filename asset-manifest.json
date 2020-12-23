@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/StudyParty-LandingPage-dev/static/css/main.a768370c.chunk.css",
-    "main.js": "/StudyParty-LandingPage-dev/static/js/main.e6010b44.chunk.js",
-    "main.js.map": "/StudyParty-LandingPage-dev/static/js/main.e6010b44.chunk.js.map",
+    "main.js": "/StudyParty-LandingPage-dev/static/js/main.5ebfe589.chunk.js",
+    "main.js.map": "/StudyParty-LandingPage-dev/static/js/main.5ebfe589.chunk.js.map",
     "runtime-main.js": "/StudyParty-LandingPage-dev/static/js/runtime-main.fa59eb45.js",
     "runtime-main.js.map": "/StudyParty-LandingPage-dev/static/js/runtime-main.fa59eb45.js.map",
     "static/css/2.f845c8f4.chunk.css": "/StudyParty-LandingPage-dev/static/css/2.f845c8f4.chunk.css",
@@ -21,6 +21,6 @@
     "static/css/2.f845c8f4.chunk.css",
     "static/js/2.d9a3c8cb.chunk.js",
     "static/css/main.a768370c.chunk.css",
-    "static/js/main.e6010b44.chunk.js"
+    "static/js/main.5ebfe589.chunk.js"
   ]
 }
